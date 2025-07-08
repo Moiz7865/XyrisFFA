@@ -66,15 +66,19 @@ public class SpawnManager implements Listener {
             if (spawnTpEvent.isCancelled()) {
                 return;
             }
-            p.teleport(tspawnLocation);
-            MiscListener.heal(p);
-            Items.giveSpawnItems(p);
-            if (main.getConfig().getBoolean("smoothSpawnTeleport")) {
-                Bukkit.getScheduler().runTaskLater(main, () -> {
-                    p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 8, 255, false, false));
-                    p.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 8, 255, false, false));
-                }, 2);
-            }
+            
+            // Ensure teleportation happens on the main thread
+            Bukkit.getScheduler().runTask(main, () -> {
+                p.teleport(tspawnLocation);
+                MiscListener.heal(p);
+                Items.giveSpawnItems(p);
+                if (main.getConfig().getBoolean("smoothSpawnTeleport")) {
+                    Bukkit.getScheduler().runTaskLater(main, () -> {
+                        p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 8, 255, false, false));
+                        p.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 8, 255, false, false));
+                    }, 2);
+                }
+            });
         }
     }
 
