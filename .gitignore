@@ -31,3 +31,4 @@ replay_pid*
 ..gradle
 output
 src/main/java/dev/darkxx/ffa/guilds
+.env
